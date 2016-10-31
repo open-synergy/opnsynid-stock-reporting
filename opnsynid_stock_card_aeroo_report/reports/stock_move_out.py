@@ -14,7 +14,7 @@ class StockMoveOut(models.Model):
     move_id = fields.Many2one(
         string="Move",
         comodel_name="stock.move",
-        )
+    )
     name = fields.Char(
         string="Description",
     )

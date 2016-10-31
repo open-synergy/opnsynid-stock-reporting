@@ -17,7 +17,7 @@ class StockMoveIn(models.Model):
     move_id = fields.Many2one(
         string="Move",
         comodel_name="stock.move",
-        )
+    )
     date = fields.Datetime(
         string="Date",
     )

@@ -14,6 +14,10 @@ class StockMoveHistory(models.Model):
     name = fields.Char(
         string="Description",
     )
+    move_id = fields.Many2one(
+        string="Move",
+        comodel_name="stock.move",
+    )
     date = fields.Datetime(
         string="Date",
     )
@@ -56,11 +60,41 @@ class StockMoveHistory(models.Model):
         drop_view_if_exists(cr, "stock_stock_move_history")
         strSQL = """
                     CREATE OR REPLACE VIEW stock_stock_move_history AS (
-                        SELECT  *
+                        SELECT
+                                row_number() OVER() as id,
+                                c.*
+                        FROM
+                        (
+                        SELECT
+                                a.move_id,
+                                a.date,
+                                a.name,
+                                a.company_id,
+                                a.product_id,
+                                a.location_id,
+                                a.picking_id,
+                                a.picking_type_id,
+                                a.product_qty,
+                                a.product_uom_id,
+                                a.move_qty,
+                                a.move_uom_id
                         FROM    stock_stock_move_in AS a
                         UNION
-                        SELECT  *
+                        SELECT
+                                b.move_id,
+                                b.date,
+                                b.name,
+                                b.company_id,
+                                b.product_id,
+                                b.location_id,
+                                b.picking_id,
+                                b.picking_type_id,
+                                b.product_qty,
+                                b.product_uom_id,
+                                b.move_qty,
+                                b.move_uom_id
                         FROM    stock_stock_move_out AS b
+                        ) AS c
                     )
                     """
         cr.execute(strSQL)

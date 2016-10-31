@@ -14,6 +14,10 @@ class StockMoveIn(models.Model):
     name = fields.Char(
         string="Description",
     )
+    move_id = fields.Many2one(
+        string="Move",
+        comodel_name="stock.move",
+    )
     date = fields.Datetime(
         string="Date",
     )
@@ -57,7 +61,8 @@ class StockMoveIn(models.Model):
         strSQL = """
                     CREATE OR REPLACE VIEW stock_stock_move_in AS (
                         SELECT
-                                a.id AS id,
+                                row_number() OVER() as id,
+                                a.id AS move_id,
                                 a.date AS date,
                                 a.name AS name,
                                 a.company_id AS company_id,

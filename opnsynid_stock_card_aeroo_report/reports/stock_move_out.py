@@ -11,6 +11,10 @@ class StockMoveOut(models.Model):
     _description = "Stock Move Out"
     _auto = False
 
+    move_id = fields.Many2one(
+        string="Move",
+        comodel_name="stock.move",
+        )
     name = fields.Char(
         string="Description",
     )
@@ -57,7 +61,8 @@ class StockMoveOut(models.Model):
         strSQL = """
                     CREATE OR REPLACE VIEW stock_stock_move_out AS (
                         SELECT
-                                a.id AS id,
+                                row_number() OVER() as id,
+                                a.id AS move_id,
                                 a.date AS date,
                                 a.name AS name,
                                 a.company_id AS company_id,

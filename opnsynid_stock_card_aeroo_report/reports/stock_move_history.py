@@ -14,6 +14,10 @@ class StockMoveHistory(models.Model):
     name = fields.Char(
         string="Description",
     )
+    move_id = fields.Many2one(
+        string="Move",
+        comodel_name="stock.move",
+        )
     date = fields.Datetime(
         string="Date",
     )

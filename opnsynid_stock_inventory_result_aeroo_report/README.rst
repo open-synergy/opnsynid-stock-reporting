@@ -27,7 +27,7 @@ Usage
 To print stock balance report, you need to:
 
 1. Go to menu *Warehouse -> Inventory Control -> Inventory Adjustments*
-2. Adjust printing options when state is "Validated"
+2. Open inventory adjustment data with *Open* state
 3. Click *Print* button
 
 Bug Tracker

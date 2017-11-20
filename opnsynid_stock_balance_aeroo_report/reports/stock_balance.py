@@ -60,7 +60,25 @@ class Parser(report_sxw.rml_parse):
                 location_id, product.id)
             result = self._compute_move(location_id,
                                         product.id)
-            uos_coeff = product.uos_coeff
+            if product.uos_id:
+                product_uos = product.uos_id.name
+                uos_coeff = product.uos_coeff
+
+                beginning_uos = (
+                    beginning * uos_coeff)
+                qty_in_uos = (
+                    result[0] * uos_coeff)
+                qty_out_uos = (
+                    result[1] * uos_coeff)
+                ending_uos = (
+                    result[2] * uos_coeff)
+            else:
+                product_uos = "-"
+                beginning_uos = 0.0
+                qty_in_uos = 0.0
+                qty_out_uos = 0.0
+                ending_uos = 0.0
+
             res = {
                 "no": no,
                 "id": product.id,
@@ -70,11 +88,11 @@ class Parser(report_sxw.rml_parse):
                 "qty_in": result[0],
                 "qty_out": result[1],
                 "ending": result[2],
-                "uos": product.uos_id.name,
-                "beginning_uos": (beginning * uos_coeff),
-                "qty_in_uos": (result[0] * uos_coeff),
-                "qty_out_uos": (result[1] * uos_coeff),
-                "ending_uos": (result[2] * uos_coeff)
+                "uos": product_uos,
+                "beginning_uos": beginning_uos,
+                "qty_in_uos": qty_in_uos,
+                "qty_out_uos": qty_out_uos,
+                "ending_uos": ending_uos
             }
             self.list_product.append(res)
             no += 1

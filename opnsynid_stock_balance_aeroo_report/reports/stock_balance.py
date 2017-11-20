@@ -60,6 +60,7 @@ class Parser(report_sxw.rml_parse):
                 location_id, product.id)
             result = self._compute_move(location_id,
                                         product.id)
+            uos_coeff = product.uos_coeff
             res = {
                 "no": no,
                 "id": product.id,
@@ -69,6 +70,11 @@ class Parser(report_sxw.rml_parse):
                 "qty_in": result[0],
                 "qty_out": result[1],
                 "ending": result[2],
+                "uos": product.uos_id.name,
+                "beginning_uos": (beginning * uos_coeff),
+                "qty_in_uos": (result[0] * uos_coeff),
+                "qty_out_uos": (result[1] * uos_coeff),
+                "ending_uos": (result[2] * uos_coeff)
             }
             self.list_product.append(res)
             no += 1
@@ -100,14 +106,15 @@ class Parser(report_sxw.rml_parse):
         qty_out = 0.0
         bal = 0.0
 
-        for move in obj_move.browse(
-                self.cr, self.uid, move_ids):
-            self.dict_total[location_id][product_id] += move.product_qty
-            if move.product_qty > 0:
-                qty_in += move.product_qty
-            else:
-                qty_out += abs(move.product_qty)
-            bal = self._get_total(location_id, product_id)
+        if move_ids:
+            for move in obj_move.browse(
+                    self.cr, self.uid, move_ids):
+                self.dict_total[location_id][product_id] += move.product_qty
+                if move.product_qty > 0:
+                    qty_in += move.product_qty
+                else:
+                    qty_out += abs(move.product_qty)
+        bal = self._get_total(location_id, product_id)
         return [qty_in, qty_out, bal]
 
     def _get_beginning_balance(self, location_id, product_id):

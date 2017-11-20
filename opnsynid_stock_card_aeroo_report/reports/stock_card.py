@@ -56,10 +56,19 @@ class Parser(report_sxw.rml_parse):
 
         for product in obj_product.browse(
                 self.cr, self.uid, self.product_ids):
+            if product.uos_id:
+                product_uos = product.uos_id.name
+                uos_coeff = product.uos_coeff
+            else:
+                product_uos = False
+                uos_coeff = 1
+
             res = {
                 "id": product.id,
                 "name": product.name,
                 "uom": product.uom_id.name,
+                "uos": product_uos,
+                "uos_coeff": uos_coeff
             }
             self.list_product.append(res)
 
@@ -101,7 +110,7 @@ class Parser(report_sxw.rml_parse):
                 "move_qty": move.move_qty,
                 "move_uom": move.move_uom_id.name,
                 "product_qty": move.product_qty,
-                "balance": bal,
+                "balance": bal
             }
             self.list_move.append(res)
             no += 1

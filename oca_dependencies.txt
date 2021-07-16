@@ -1,1 +1,3 @@
 oca_stock_logistics_reporting https://github.com/OCA/stock-logistics-reporting.git 14.0
+oca_server_ux https://github.com/OCA/server-ux.git 14.0
+oca_report_engine https://github.com/OCA/reporting-engine.git 14.0

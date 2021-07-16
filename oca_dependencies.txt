@@ -1,0 +1,1 @@
+oca_stock_logistics_reporting https://github.com/OCA/stock-logistics-reporting.git 14.0

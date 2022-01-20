@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
-# © 2016 OpenSynergy Indonesia
+# Copyright 2016 OpenSynergy Indonesia
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
+# pylint: disable=R8110
 import time
+
 from openerp.report import report_sxw
 
 
 class Parser(report_sxw.rml_parse):
-
     def __init__(self, cr, uid, name, context):
         super(Parser, self).__init__(cr, uid, name, context)
         self.list_location = []
         self.list_product = []
         self.list_move = []
         self.dict_total = {}
-        self.localcontext.update({
-            "time": time,
-            "get_company": self._get_company,
-            "get_location": self._get_location,
-            "get_product": self._get_product,
-        })
+        self.localcontext.update(
+            {
+                "time": time,
+                "get_company": self._get_company,
+                "get_location": self._get_location,
+                "get_product": self._get_product,
+            }
+        )
 
     def set_context(self, objects, data, ids, report_type=None):
         self.form = data["form"]
@@ -31,16 +33,15 @@ class Parser(report_sxw.rml_parse):
         return super(Parser, self).set_context(objects, data, ids, report_type)
 
     def _get_company(self):
-        data = self.localcontext['data']['form']
-        company_name = data['company_id'] and data['company_id'][1] or False
+        data = self.localcontext["data"]["form"]
+        company_name = data["company_id"] and data["company_id"][1] or False
 
         return company_name
 
     def _get_location(self):
         obj_location = self.pool.get("stock.location")
 
-        for location in obj_location.browse(
-                self.cr, self.uid, self.location_ids):
+        for location in obj_location.browse(self.cr, self.uid, self.location_ids):
             res = {
                 "id": location.id,
                 "name": location.display_name,
@@ -54,24 +55,17 @@ class Parser(report_sxw.rml_parse):
 
         no = 1
         self.list_product = []
-        for product in obj_product.browse(
-                self.cr, self.uid, self.product_ids):
-            beginning = self._get_beginning_balance(
-                location_id, product.id)
-            result = self._compute_move(location_id,
-                                        product.id)
+        for product in obj_product.browse(self.cr, self.uid, self.product_ids):
+            beginning = self._get_beginning_balance(location_id, product.id)
+            result = self._compute_move(location_id, product.id)
             if product.uos_id:
                 product_uos = product.uos_id.name
                 uos_coeff = product.uos_coeff
 
-                beginning_uos = (
-                    beginning * uos_coeff)
-                qty_in_uos = (
-                    result[0] * uos_coeff)
-                qty_out_uos = (
-                    result[1] * uos_coeff)
-                ending_uos = (
-                    result[2] * uos_coeff)
+                beginning_uos = beginning * uos_coeff
+                qty_in_uos = result[0] * uos_coeff
+                qty_out_uos = result[1] * uos_coeff
+                ending_uos = result[2] * uos_coeff
             else:
                 product_uos = "-"
                 beginning_uos = 0.0
@@ -92,7 +86,7 @@ class Parser(report_sxw.rml_parse):
                 "beginning_uos": beginning_uos,
                 "qty_in_uos": qty_in_uos,
                 "qty_out_uos": qty_out_uos,
-                "ending_uos": ending_uos
+                "ending_uos": ending_uos,
             }
             self.list_product.append(res)
             no += 1
@@ -117,16 +111,14 @@ class Parser(report_sxw.rml_parse):
                 ("date", "<=", self.date_end),
             ] + criteria
 
-        move_ids = obj_move.search(
-            self.cr, self.uid, criteria, order="date asc, id")
+        move_ids = obj_move.search(self.cr, self.uid, criteria, order="date asc, id")
 
         qty_in = 0.0
         qty_out = 0.0
         bal = 0.0
 
         if move_ids:
-            for move in obj_move.browse(
-                    self.cr, self.uid, move_ids):
+            for move in obj_move.browse(self.cr, self.uid, move_ids):
                 self.dict_total[location_id][product_id] += move.product_qty
                 if move.product_qty > 0:
                     qty_in += move.product_qty
@@ -150,11 +142,9 @@ class Parser(report_sxw.rml_parse):
                 ("product_id", "=", product_id),
                 ("date", "<", self.date_start),
             ]
-            move_ids = obj_move.search(
-                self.cr, self.uid, criteria)
+            move_ids = obj_move.search(self.cr, self.uid, criteria)
             if move_ids:
-                for move in obj_move.browse(
-                        self.cr, self.uid, move_ids):
+                for move in obj_move.browse(self.cr, self.uid, move_ids):
                     result += move.product_qty
         self.dict_total[location_id][product_id] = result
         return result

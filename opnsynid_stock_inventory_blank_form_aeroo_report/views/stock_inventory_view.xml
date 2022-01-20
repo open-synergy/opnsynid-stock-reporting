@@ -1,15 +1,27 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <openerp>
     <data>
 
         <record model="ir.ui.view" id="stock_inventory_form_view">
             <field name="name">Stock Inventory - Add Blank Form Print Button</field>
             <field name="model">stock.inventory</field>
-            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="inherit_id" ref="stock.view_inventory_form" />
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='state']" position="before">
-                    <button name="%(stock_inventory_blank_form_ods_report)d" string="Blank Form ODS" icon="gtk-print" type="action" states="confirm"/>
-                    <button name="%(stock_inventory_blank_form_xls_report)d" string="Blank Form XLS" icon="gtk-print" type="action" states="confirm"/>
+                    <button
+                        name="%(stock_inventory_blank_form_ods_report)d"
+                        string="Blank Form ODS"
+                        icon="gtk-print"
+                        type="action"
+                        states="confirm"
+                    />
+                    <button
+                        name="%(stock_inventory_blank_form_xls_report)d"
+                        string="Blank Form XLS"
+                        icon="gtk-print"
+                        type="action"
+                        states="confirm"
+                    />
                 </xpath>
             </field>
         </record>

@@ -1,5 +1,5 @@
 [MASTER]
-load-plugins=ssi_pylint_odoo
+load-plugins=pylint_odoo
 score=n
 
 [ODOOLINT]
@@ -64,7 +64,6 @@ enable=anomalous-backslash-in-string,
     use-vim-comment,
     wrong-tabs-instead-of-spaces,
     xml-syntax-error,
-    file-not-used,
     # messages that do not cause the lint step to fail
     consider-merging-classes-inherited,
     create-user-wo-reset-password,

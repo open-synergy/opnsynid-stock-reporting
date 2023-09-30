@@ -43,9 +43,33 @@ class ReportStockCardReportXlsx(models.AbstractModel):
         initial_template = {
             "1_ref": {
                 "data": {"value": "Initial", "format": FORMATS["format_tcell_center"]},
-                "colspan": 5,
+                "colspan": 3,
             },
-            "3_balance": {
+            "2_initial_value": {
+                "data": {
+                    "value": self._render("initial_value"),
+                    "format": FORMATS["format_tcell_amount_right"],
+                }
+            },
+            "3_space": {
+                "data": {
+                    "value": "",
+                    "format": FORMATS["format_tcell_center"],
+                }
+            },
+            "4_space": {
+                "data": {
+                    "value": "",
+                    "format": FORMATS["format_tcell_center"],
+                }
+            },
+            "5_space": {
+                "data": {
+                    "value": "",
+                    "format": FORMATS["format_tcell_center"],
+                }
+            },
+            "6_balance": {
                 "data": {
                     "value": self._render("balance"),
                     "format": FORMATS["format_tcell_amount_right"],
@@ -74,17 +98,27 @@ class ReportStockCardReportXlsx(models.AbstractModel):
                 "data": {"value": self._render("value")},
                 "width": 25,
             },
-            "4_input": {
+            "4_cumulative_value": {
+                "header": {"value": "Cumulative Value"},
+                "data": {"value": self._render("cumulative_value")},
+                "width": 25,
+            },
+            "5_unit_cost": {
+                "header": {"value": "Unit Cost"},
+                "data": {"value": self._render("unit_cost")},
+                "width": 25,
+            },
+            "6_input": {
                 "header": {"value": "In"},
                 "data": {"value": self._render("input")},
                 "width": 25,
             },
-            "5_output": {
+            "7_output": {
                 "header": {"value": "Out"},
                 "data": {"value": self._render("output")},
                 "width": 25,
             },
-            "6_balance": {
+            "8_balance": {
                 "header": {"value": "Balance"},
                 "data": {"value": self._render("balance")},
                 "width": 25,
@@ -149,12 +183,18 @@ class ReportStockCardReportXlsx(models.AbstractModel):
         balance = objects._get_initial(
             objects.results.filtered(lambda l: l.product_id == product and l.is_initial)
         )
+        cumulative_value = objects._get_initial_value(
+            objects.results.filtered(lambda l: l.product_id == product and l.is_initial)
+        )
         row_pos = self._write_line(
             ws,
             row_pos,
             ws_params,
             col_specs_section="data",
-            render_space={"balance": balance},
+            render_space={
+                "balance": balance,
+                "initial_value": cumulative_value,
+            },
             col_specs="col_specs_initial",
             wanted_list="wanted_list_initial",
         )
@@ -163,6 +203,8 @@ class ReportStockCardReportXlsx(models.AbstractModel):
         )
         for line in product_lines:
             balance += line.product_in - line.product_out
+            cumulative_value += line.value
+            unit_cost = line.value / abs(line.product_in - line.product_out)
             row_pos = self._write_line(
                 ws,
                 row_pos,
@@ -172,6 +214,8 @@ class ReportStockCardReportXlsx(models.AbstractModel):
                     "date": line.date or "",
                     "reference": line.display_name or "",
                     "value": line.value or 0,
+                    "cumulative_value": cumulative_value,
+                    "unit_cost": unit_cost,
                     "input": line.product_in or 0,
                     "output": line.product_out or 0,
                     "balance": balance,

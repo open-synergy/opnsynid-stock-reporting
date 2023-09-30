@@ -3,8 +3,30 @@
         id="report_stock_card_report_base"
         inherit_id="stock_card_report.report_stock_card_report_base"
     >
-        <xpath expr="//div[@class='act_as_row lines']/div[3]" position="after">
+        <xpath expr="//div[@class='act_as_row lines']" position="before">
+            <t
+                t-set="initial_value"
+                t-value="o._get_initial_value(o.results.filtered(lambda l: l.product_id == product and l.is_initial))"
+            />
+        </xpath>
+        <xpath expr="//div[@class='act_as_row lines']/div[2]" position="after">
             <div class="act_as_cell" />
+            <div class="act_as_cell right">
+                <t t-esc="'{0:,.3f}'.format(initial_value)" />
+            </div>
+            <div class="act_as_cell" />
+        </xpath>
+        <xpath expr="//div[@class='act_as_row lines']" position="after">
+            <t t-set="cumulative_value" t-value="initial_value" />
+        </xpath>
+        <xpath
+            expr="//t[@t-call='stock_card_report.report_stock_card_lines']"
+            position="before"
+        >
+            <t
+                t-set="cumulative_value"
+                t-value="cumulative_value + product_line.value"
+            />
         </xpath>
     </template>
 
@@ -14,6 +36,8 @@
     >
         <xpath expr="//div[1]/div[1]/div[2]" position="after">
             <div class="act_as_cell">Value</div>
+            <div class="act_as_cell">Cumulative Value</div>
+            <div class="act_as_cell">Unit Cost</div>
         </xpath>
     </template>
 
@@ -24,6 +48,14 @@
         <xpath expr="//div[1]/div[2]" position="after">
             <div class="act_as_cell right">
                 <t t-esc="'{0:,.3f}'.format(product_line.value)" />
+            </div>
+            <div class="act_as_cell right">
+                <t t-esc="'{0:,.3f}'.format(cumulative_value)" />
+            </div>
+            <div class="act_as_cell right">
+                <t
+                    t-esc="'{0:,.3f}'.format(product_line.value / abs(product_line.product_in - product_line.product_out))"
+                />
             </div>
         </xpath>
     </template>

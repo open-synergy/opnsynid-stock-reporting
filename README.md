@@ -14,7 +14,11 @@ opnsynid-stock-reporting
 
 [//]: # (addons)
 
-This part will be replaced when running the oca-gen-addons-table script from OCA/maintainer-tools.
+Available addons
+----------------
+addon | version | maintainers | summary
+--- | --- | --- | ---
+[stock_card_report_value](stock_card_report_value/) | 14.0.1.0.1 |  | Stock Card Report Value
 
 [//]: # (end addons)
 

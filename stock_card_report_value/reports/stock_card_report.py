@@ -55,3 +55,7 @@ class StockCardReport(models.TransientModel):
         stock_card_results = self._cr.dictfetchall()
         ReportLine = self.env["stock.card.view"]
         self.results = [ReportLine.new(line).id for line in stock_card_results]
+
+    def _get_initial_value(self, product_line):
+        value = sum(product_line.mapped("value"))
+        return value

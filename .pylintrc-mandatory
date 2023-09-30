@@ -1,5 +1,5 @@
 [MASTER]
-load-plugins=ssi_pylint_odoo
+load-plugins=pylint_odoo
 score=n
 
 [ODOOLINT]
@@ -56,8 +56,7 @@ enable=anomalous-backslash-in-string,
     unreachable,
     use-vim-comment,
     wrong-tabs-instead-of-spaces,
-    xml-syntax-error,
-    file-not-used
+    xml-syntax-error
 
 [REPORTS]
 msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}
